@@ -23,6 +23,7 @@ public class KafkaController {
 
     @GetMapping(value = "/async")
     public String getAsyncAction() {
+        System.out.println("컨트롤러 :: " + Thread.currentThread().getId());
         integratedService.doAction();
         return "SUCCESS";
     }
