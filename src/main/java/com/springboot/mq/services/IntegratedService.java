@@ -15,6 +15,7 @@ public class IntegratedService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void doAction() {
+        System.out.println("서비스 :: " + Thread.currentThread().getId());
         //이벤트 퍼블리셔 통한 이벤트 발생
         applicationEventPublisher.publishEvent(
                 TestEvent.builder()
@@ -24,6 +25,7 @@ public class IntegratedService {
         );
 
         throw new RuntimeException("testRuntimeException");
+//        System.out.println("doAction 동작 끝!");
     }
 
 }
