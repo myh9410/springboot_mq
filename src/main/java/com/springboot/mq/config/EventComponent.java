@@ -1,9 +1,8 @@
 package com.springboot.mq.config;
 
 import com.springboot.mq.dto.event.TestEvent;
-import com.springboot.mq.services.TestService;
+import com.springboot.mq.services.KafkaProducer;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -12,9 +11,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 @Component
 public class EventComponent {
-
-    private final TestService testService;
-
+    private final KafkaProducer kafkaProducer;
     /**
      * EventListener의 경우, 상위 트랜잭션과 상관없이 동작
      *
@@ -31,18 +28,19 @@ public class EventComponent {
      *      정상 동작한다면, 이벤트 실행되지 않음.
      *      ROLLBACK 발생 시 이벤트 동작하여 데이터 추가됨. (다른 쓰레드 id)
      */
+    /*
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-//    @EventListener
     @Async
     public void eventListen(TestEvent testEvent) {
         System.out.println("async 동작 :: " + Thread.currentThread().getId() + " :: " + testEvent.toString());
-        testService.doTest();
+        testService.createTestData(testEvent.getEvent());
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMPLETION)
-    public void eventListen2(Object object) {
+    public void eventListen2(TestEvent testEvent) {
         System.out.println("eventListen2 동작 :: " + Thread.currentThread().getId() + " :: " + object.toString());
     }
+    */
 
     /**
      * EventListener의 경우, 특정 value를 설정해주지 않으면 기본적으로 모든 이벤트에 실행되는 것으로 보임
@@ -53,8 +51,16 @@ public class EventComponent {
      *
      * 당연히 @Async가 있다면, 전부 다른 쓰레드 id로 비동기 동작
      */
-    @EventListener
+    /*
+    @EventListener(TestEvent.class)
     public void eventListen3(Object object) {
         System.out.println("eventListen3 동작 :: " + Thread.currentThread().getId() + " :: " + object);
+    }
+    */
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Async
+    public void publishTestEvent(TestEvent testEvent) {
+        kafkaProducer.sendTestEventDto(testEvent);
     }
 }
