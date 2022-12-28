@@ -1,7 +1,6 @@
 package com.springboot.mq.controller;
 
 import com.springboot.mq.services.IntegratedService;
-import com.springboot.mq.services.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;
@@ -11,12 +10,11 @@ import org.springframework.web.bind.annotation.*;
 @EnableAsync
 @RequestMapping(value = "/kafka")
 public class KafkaController {
-    private final KafkaProducer producer;
     private final IntegratedService integratedService;
 
     @PostMapping
-    public String sendMessage(@RequestParam("message") String message) {
-        this.producer.sendMessage(message);
+    public String createMessageDataAndEmitEvent(@RequestParam("message") String message) {
+        integratedService.createTestEvent(message);
 
         return "SUCCESS";
     }
