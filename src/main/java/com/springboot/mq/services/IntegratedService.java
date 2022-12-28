@@ -2,8 +2,6 @@ package com.springboot.mq.services;
 
 import com.springboot.mq.dto.event.TestEvent;
 import com.springboot.mq.entity.Test;
-import com.springboot.mq.services.KafkaProducer;
-import com.springboot.mq.services.TestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -38,6 +36,7 @@ public class IntegratedService {
     /**
      * test DB에 데이터를 넣고, 이벤트를 발생시킨다.
      */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void createTestEvent(String message) {
         //1. DB에 데이터를 넣는다.
         Test test = testService.createTestData(message);
@@ -47,7 +46,7 @@ public class IntegratedService {
                 TestEvent.builder()
                     .no(test.getNo())
                     .event(test.getName())
-                    .build()
+                    .build().toString()
         );
     }
 

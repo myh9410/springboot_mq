@@ -1,6 +1,5 @@
 package com.springboot.mq.config;
 
-import com.springboot.mq.dto.event.TestEvent;
 import com.springboot.mq.services.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -58,9 +57,9 @@ public class EventComponent {
     }
     */
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     @Async
-    public void publishTestEvent(TestEvent testEvent) {
-        kafkaProducer.sendTestEventDto(testEvent);
+    public void publishTestEvent(String testEvent) {
+        kafkaProducer.sendTestEventAsString(testEvent);
     }
 }
