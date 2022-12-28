@@ -3,17 +3,9 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   kafka:
-    consumer:
-      bootstrap-servers: localhost:9092
-      group-id: foo
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    producer:
-      bootstrap-servers: localhost:9092
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-  datasource:
+    bootstrap-servers: localhost:9092
+    group-id: event
+  datasource:   #h2
     url: jdbc:h2:tcp://localhost/~/event
     username: root
     password: root
