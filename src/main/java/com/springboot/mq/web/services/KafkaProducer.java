@@ -1,6 +1,6 @@
-package com.springboot.mq.services;
+package com.springboot.mq.web.services;
 
-import com.springboot.mq.dto.event.TestEvent;
+import com.springboot.mq.domains.dto.TestEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;

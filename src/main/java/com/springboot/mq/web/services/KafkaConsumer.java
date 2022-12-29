@@ -1,4 +1,4 @@
-package com.springboot.mq.services;
+package com.springboot.mq.web.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

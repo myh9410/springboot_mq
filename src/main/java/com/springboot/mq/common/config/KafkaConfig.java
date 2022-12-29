@@ -1,4 +1,4 @@
-package com.springboot.mq.config;
+package com.springboot.mq.common.config;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

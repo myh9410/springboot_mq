@@ -1,7 +1,7 @@
-package com.springboot.mq.services;
+package com.springboot.mq.web.services;
 
-import com.springboot.mq.dto.event.TestEvent;
-import com.springboot.mq.entity.Test;
+import com.springboot.mq.domains.dto.TestEvent;
+import com.springboot.mq.domains.domain.Test;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;

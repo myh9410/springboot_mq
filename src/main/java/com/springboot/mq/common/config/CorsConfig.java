@@ -1,4 +1,4 @@
-package com.springboot.mq.config;
+package com.springboot.mq.common.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

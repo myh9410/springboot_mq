@@ -1,4 +1,4 @@
-package com.springboot.mq.config.web;
+package com.springboot.mq.common.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

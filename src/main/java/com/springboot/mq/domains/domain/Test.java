@@ -1,4 +1,4 @@
-package com.springboot.mq.entity;
+package com.springboot.mq.domains.domain;
 
 import lombok.*;
 

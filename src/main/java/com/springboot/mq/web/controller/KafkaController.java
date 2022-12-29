@@ -1,6 +1,6 @@
-package com.springboot.mq.controller;
+package com.springboot.mq.web.controller;
 
-import com.springboot.mq.services.IntegratedService;
+import com.springboot.mq.web.services.IntegratedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;

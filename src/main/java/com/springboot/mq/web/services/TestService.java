@@ -1,7 +1,7 @@
-package com.springboot.mq.services;
+package com.springboot.mq.web.services;
 
-import com.springboot.mq.entity.Test;
-import com.springboot.mq.repository.TestRepository;
+import com.springboot.mq.domains.domain.Test;
+import com.springboot.mq.domains.repository.TestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,9 +17,7 @@ public class TestService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Test createTestData(String message) {
-        System.out.println("데이터 생성");
         Test test = testRepository.save(Test.builder().name(message).build());
-        System.out.println(test.toString());
 
         return test;
     }

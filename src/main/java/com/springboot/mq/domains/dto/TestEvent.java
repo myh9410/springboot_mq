@@ -1,4 +1,4 @@
-package com.springboot.mq.dto.event;
+package com.springboot.mq.domains.dto;
 
 import lombok.Builder;
 import lombok.Getter;
