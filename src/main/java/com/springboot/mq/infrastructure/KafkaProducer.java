@@ -1,4 +1,4 @@
-package com.springboot.mq.web.services;
+package com.springboot.mq.infrastructure;
 
 import com.springboot.mq.domains.dto.TestEvent;
 import lombok.extern.slf4j.Slf4j;

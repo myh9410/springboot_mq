@@ -2,7 +2,6 @@ package com.springboot.mq.infrastructure;
 
 import com.springboot.mq.domains.dto.TestEvent;
 
-import com.springboot.mq.web.services.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
