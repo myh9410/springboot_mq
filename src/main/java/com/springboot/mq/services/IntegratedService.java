@@ -46,7 +46,24 @@ public class IntegratedService {
                 TestEvent.builder()
                     .no(test.getNo())
                     .event(test.getName())
-                    .build().toString()
+                    .build()
+        );
+    }
+
+    /**
+     * test DB에 데이터를 넣고, 이벤트를 발생시킨다.
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void createTestEventAsString(String message) {
+        //1. DB에 데이터를 넣는다.
+        Test test = testService.createTestData(message);
+
+        //2. 이벤트를 발생시킨다.
+        applicationEventPublisher.publishEvent(
+                TestEvent.builder()
+                        .no(test.getNo())
+                        .event(test.getName())
+                        .build().toString()
         );
     }
 

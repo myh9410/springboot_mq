@@ -19,6 +19,13 @@ public class KafkaController {
         return "SUCCESS";
     }
 
+    @PostMapping(value = "/string")
+    public String createMessageDataAndEmitEventOfString(@RequestParam("message") String message) {
+        integratedService.createTestEventAsString(message);
+
+        return "SUCCESS";
+    }
+
     @GetMapping(value = "/async")
     public String getAsyncAction() {
         System.out.println("컨트롤러 :: " + Thread.currentThread().getId());
