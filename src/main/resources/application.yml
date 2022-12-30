@@ -5,8 +5,25 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
     group-id: event
-  datasource:   #h2
-    url: jdbc:h2:tcp://localhost/~/event
-    username: root
-    password: root
-    driver-class-name: org.h2.Driver
+
+  #  datasource:   #h2
+  #    url: jdbc:h2:tcp://localhost/~/event
+  #    username: root
+  #    password: moon9494
+  #    driver-class-name: org.h2.Driver
+
+  datasource:   #mysql
+    event:
+      xa-properties:
+        url: jdbc:mysql://localhost:3306/event?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+        user: root
+        password: moon9494
+      xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    customer:
+      xa-properties:
+        url: jdbc:mysql://localhost:3306/customer?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+        user: root
+        password: moon9494
+      xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
+      driver-class-name: com.mysql.cj.jdbc.Driver
