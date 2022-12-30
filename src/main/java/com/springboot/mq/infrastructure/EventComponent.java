@@ -58,7 +58,11 @@ public class EventComponent {
     }
     */
 
-    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    //condition으로 eventlistener가 동작하는 조건을 설정할 수 있다.
+    @TransactionalEventListener(
+            phase = TransactionPhase.BEFORE_COMMIT,
+            condition = "#testEvent.no > 35"
+    )
     @Async
     public void publishTestEvent(TestEvent testEvent) {
         kafkaProducer.sendTestEvent(testEvent);

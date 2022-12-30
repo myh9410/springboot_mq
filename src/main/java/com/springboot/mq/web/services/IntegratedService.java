@@ -24,9 +24,9 @@ public class IntegratedService {
         //이벤트 퍼블리셔 통한 이벤트 발생
         applicationEventPublisher.publishEvent(
                 TestEvent.builder()
-                        .no(1L)
-                        .event("test1 이벤트 추가")
-                        .build()
+                    .no(1L)
+                    .event("test1 이벤트 추가")
+                    .build()
         );
 
         throw new RuntimeException("testRuntimeException");
@@ -61,9 +61,9 @@ public class IntegratedService {
         //2. 이벤트를 발생시킨다.
         applicationEventPublisher.publishEvent(
                 TestEvent.builder()
-                        .no(test.getNo())
-                        .event(test.getName())
-                        .build().toString()
+                    .no(test.getNo())
+                    .event(test.getName())
+                    .build().toString()
         );
     }
 
