@@ -1,7 +1,7 @@
 package com.springboot.mq.web.services;
 
 import com.springboot.mq.domains.domain.Test;
-import com.springboot.mq.domains.repository.TestRepository;
+import com.springboot.mq.domains.repository.test.TestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

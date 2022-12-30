@@ -26,6 +26,13 @@ public class KafkaController {
         return "SUCCESS";
     }
 
+    @PostMapping(value = "/transaction")
+    public String multipleDataSourceTransactionTest(@RequestParam("message") String message) {
+        integratedService.multiDataSourceTransacionTest(message);
+
+        return "SUCCESS";
+    }
+
     @GetMapping(value = "/async")
     public String getAsyncAction() {
         System.out.println("컨트롤러 :: " + Thread.currentThread().getId());

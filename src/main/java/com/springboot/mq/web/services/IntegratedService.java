@@ -1,5 +1,6 @@
 package com.springboot.mq.web.services;
 
+import com.springboot.mq.domains.domain.User;
 import com.springboot.mq.domains.dto.TestEvent;
 import com.springboot.mq.domains.domain.Test;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class IntegratedService {
 
     private final ApplicationEventPublisher applicationEventPublisher;
     private final TestService testService;
+    private final UserService userService;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void doAction() {
@@ -65,6 +67,21 @@ public class IntegratedService {
                     .event(test.getName())
                     .build().toString()
         );
+    }
+
+    /**
+     * 멀티 DB에 대한 트랜잭션매니저 테스트
+     */
+    @Transactional(
+            propagation = Propagation.REQUIRES_NEW,
+            transactionManager = "jtaTransactionManager"
+    )
+    public void multiDataSourceTransacionTest(String message) {
+        //1. DB에 데이터를 넣는다.
+        Test test = testService.createTestData(message);
+
+        //2. DB에 데이터를 넣는다.
+        User user = userService.createUserData();
     }
 
 }
