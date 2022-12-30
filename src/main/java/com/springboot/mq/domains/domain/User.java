@@ -8,13 +8,15 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "test")
+@Table(name = "user")
 @Entity
-public class Test {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long no;
+
+    private String id;
 
     private String name;
 }
