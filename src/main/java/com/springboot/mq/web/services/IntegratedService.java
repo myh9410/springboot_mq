@@ -23,11 +23,14 @@ public class IntegratedService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void doAction() {
         System.out.println("서비스 :: " + Thread.currentThread().getId());
+
+        Test test = testService.createTestData("transactional 과 eventlistener 간 롤백 범위 확인");
+
         //이벤트 퍼블리셔 통한 이벤트 발생
         applicationEventPublisher.publishEvent(
                 TestEvent.builder()
-                    .no(1L)
-                    .event("test1 이벤트 추가")
+                    .no(test.getNo())
+                    .event(test.getName())
                     .build()
         );
 

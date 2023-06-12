@@ -19,11 +19,12 @@ public class EventComponent {
      * TransactionPhase.AFTER_COMPLETION :
      *      async 적용되어 다른 쓰레드 id로 실행 / DB insert 성공(트랜잭션 성공, 실패 여부와 상관없이 동작한다.)
      * TransactionPhase.AFTER_COMMIT :
-     *      이벤트 동작 X (트랜잭션이 성공하지 않았기 때문에 이벤트가 동작하지 않는다.)
+     *      트랜잭션이 성공하지 않는다면 이벤트를 실행하지 않는다.
      * TransactionPhase.BEFORE_COMMIT : 
      *      트랜잭션의 커밋 전에 이벤트 실행이 되어야하는데
-     *      RuntimeException 발생 시 ROLLBACK 동작하여 이벤트 동작하지 않는것으로 보임
+     *      RuntimeException 발생 시 ROLLBACK 동작하여 이벤트를 실행하지 않는다.
      *      정상 동작한다면, async 적용되어 다른 쓰레드 id로 실행됨
+     *      AFTER_COMMIT과 다른점은 상위 transaction에 대한 롤백 처리에 영향을 줄 수 있음. (BEFORE_COMMIT에서 exception발생 시 상위 트랜잭션 롤백)
      *  TransactionPhase.AFTER_ROLLBACK :
      *      정상 동작한다면, 이벤트 실행되지 않음.
      *      ROLLBACK 발생 시 이벤트 동작하여 데이터 추가됨. (다른 쓰레드 id)
@@ -65,6 +66,7 @@ public class EventComponent {
     )
     @Async
     public void publishTestEvent(TestEvent testEvent) {
+        System.out.println("이벤트 :: " + Thread.currentThread().getId());
         kafkaProducer.sendTestEvent(testEvent);
     }
 
