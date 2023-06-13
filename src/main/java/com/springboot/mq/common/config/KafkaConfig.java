@@ -33,6 +33,9 @@ public class KafkaConfig {
     @Bean
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, String>> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<Integer, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        //consumer 쓰레드의 수를 설정한다.
+        //concurrency를 증가시키면 쓰레드의 수가 증가하므로, kafka 메세지에 대한 병렬 처리가 가능
+        //다만, partition의 수나 리소스 등을 고려하여 최적화된 성능을 낼 수 있도록 값을 조정하는게 좋다.
         factory.setConcurrency(1);
         factory.setConsumerFactory(consumerFactory());
 
