@@ -20,9 +20,11 @@ public class SecurityConfig {
                 .csrf().disable()
                 .httpBasic().disable()
                 .cors().and()
-                .authorizeRequests().antMatchers(
-                        "/kafka/**"
-                ).permitAll();
+                .authorizeRequests()
+                .antMatchers(
+                        "/kafka/**","/actuator/health"
+                ).permitAll()
+                .anyRequest().authenticated();
 
             return http.build();
     }

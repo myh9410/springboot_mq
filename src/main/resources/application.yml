@@ -27,3 +27,21 @@ spring:
         password: moon9494
       xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
       driver-class-name: com.mysql.cj.jdbc.Driver
+logging:
+  level:
+    org:
+      springframework:
+        transaction:
+          interceptor: trace
+#actuator - https://techblog.woowahan.com/9232/ 참고
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      enabled: true
+  server:
+    port: 8081
