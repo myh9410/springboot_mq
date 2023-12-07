@@ -15,25 +15,28 @@ spring:
   datasource:   #mysql
     event:
       xa-properties:
-        url: jdbc:mysql://localhost:3306/event?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+        url: jdbc:mysql://localhost:3306/event?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&pinGlobalTxToPhysicalConnection=true
         user: root
         password: moon9494
       xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
       driver-class-name: com.mysql.cj.jdbc.Driver
     customer:
       xa-properties:
-        url: jdbc:mysql://localhost:3306/customer?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+        url: jdbc:mysql://localhost:3306/customer?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&pinGlobalTxToPhysicalConnection=true
         user: root
         password: moon9494
       xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
       driver-class-name: com.mysql.cj.jdbc.Driver
+
+# 트랜잭션 로깅
 logging:
   level:
     org:
       springframework:
         transaction:
           interceptor: trace
-#actuator - https://techblog.woowahan.com/9232/ 참고
+
+#actuator 설정 - https://techblog.woowahan.com/9232/ 참고
 management:
   endpoints:
     enabled-by-default: false

@@ -2,16 +2,25 @@ package com.springboot.mq.infrastructure;
 
 import com.springboot.mq.domains.dto.TestEvent;
 
+import com.springboot.mq.domains.repository.callback.CallbackRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class EventComponent {
     private final KafkaProducer kafkaProducer;
+    private final CallbackRepository callbackRepository;
+
     /**
      * EventListener의 경우, 상위 트랜잭션과 상관없이 동작
      *
@@ -60,13 +69,31 @@ public class EventComponent {
     */
 
     //condition으로 eventlistener가 동작하는 조건을 설정할 수 있다.
+    @Transactional
     @TransactionalEventListener(
             phase = TransactionPhase.BEFORE_COMMIT,
             condition = "#testEvent.no > 35"
     )
     @Async
     public void publishTestEvent(TestEvent testEvent) {
-        System.out.println("이벤트 :: " + Thread.currentThread().getId());
+        log.info("""
+                
+                [log start]
+                이벤트 - publishTestEvent :: {}
+                트랜잭션 hashCode :: {}
+                [log end]
+                """, Thread.currentThread().getId(), TransactionAspectSupport.currentTransactionStatus().hashCode());
+
+        Optional<Callback> optionalCallback = callbackRepository.findById(testEvent.getNo());
+
+        if (optionalCallback.isEmpty()) {
+            callbackRepository.save(Callback.builder().no(testEvent.getNo()).count(1L).build());
+        } else {
+            Callback callback = optionalCallback.get();
+            callback.addCount();
+            callbackRepository.save(callback);
+        }
+
         kafkaProducer.sendTestEvent(testEvent);
     }
 

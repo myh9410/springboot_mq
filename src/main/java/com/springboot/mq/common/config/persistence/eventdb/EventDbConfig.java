@@ -11,7 +11,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import javax.sql.DataSource;
 
 @EnableJpaRepositories(
-        basePackages = "com.springboot.mq.domains.repository.test",
+        basePackages = {"com.springboot.mq.domains.repository.test","com.springboot.mq.domains.repository.callback"},
         entityManagerFactoryRef = "testEntityManager",
         transactionManagerRef = "jtaTransactionManager"
 )
@@ -34,6 +34,20 @@ public class EventDbConfig {
         entityManager.setJpaVendorAdapter(jpaVendorAdapter);
         entityManager.setPackagesToScan("com.springboot.mq.domains.domain");
         entityManager.setPersistenceUnitName("testEntityManager");
+
+        return entityManager;
+    }
+
+    @Bean("callbackEntityManager")
+    public LocalContainerEntityManagerFactoryBean callbackEntityManager(
+            JpaVendorAdapter jpaVendorAdapter
+    ) {
+        LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
+
+        entityManager.setJtaDataSource(testDataSource());
+        entityManager.setJpaVendorAdapter(jpaVendorAdapter);
+        entityManager.setPackagesToScan("com.springboot.mq.domains.domain");
+        entityManager.setPersistenceUnitName("callbackEntityManager");
 
         return entityManager;
     }
