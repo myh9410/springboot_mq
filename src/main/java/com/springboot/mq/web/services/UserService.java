@@ -1,7 +1,9 @@
 package com.springboot.mq.web.services;
 
 import com.springboot.mq.domains.domain.User;
-import com.springboot.mq.domains.repository.user.UserRepository;
+import com.springboot.mq.domains.dto.UserInfo;
+import com.springboot.mq.domains.dto.request.CreateUserRequest;
+import com.springboot.mq.domains.repository.customer.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,4 +25,11 @@ public class UserService {
         );
     }
 
+    public UserInfo findUserByNo(Long no) {
+        return  userRepository.getUserInfoByNo(no);
+    }
+
+    public UserInfo createUser(CreateUserRequest createUserRequest) {
+        return null;
+    }
 }
