@@ -12,7 +12,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import javax.sql.DataSource;
 
 @EnableJpaRepositories(
-        basePackages = "com.springboot.mq.domains.repository.user",
+        basePackages = "com.springboot.mq.domains.repository.customer.user",
         entityManagerFactoryRef = "customerEntityManager",
         transactionManagerRef = "jtaTransactionManager"
 )

@@ -22,7 +22,7 @@ public class SecurityConfig {
                 .cors().and()
                 .authorizeRequests()
                 .antMatchers(
-                        "/kafka/**","/actuator/health"
+                        "/kafka/**","/actuator/health", "/users/**"
                 ).permitAll()
                 .anyRequest().authenticated();
 
