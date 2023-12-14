@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.querydsl.core.annotations.QueryProjection;
+import com.springboot.mq.domains.domain.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -34,6 +35,14 @@ public class UserInfo {
         this.name = name;
         this.createDate = createDate;
         this.updateDate = updateDate;
+    }
+
+    public UserInfo(User user) {
+        this.no = user.getNo();
+        this.id = user.getId();
+        this.name = user.getName();
+        this.createDate = user.getCreateDate();
+        this.updateDate = user.getUpdateDate();
     }
 
 }

@@ -1,51 +1,42 @@
 package com.springboot.mq.domains.domain;
 
-import com.atomikos.util.Assert;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.springboot.mq.common.enums.YorN;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@ToString
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-@EntityListeners(AuditingEntityListener.class)
-@Table(name = "user")
+@Table(name = "boards")
 @Entity
-public class User {
-
+public class Boards {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long no;
 
-    private String id;
+    private Long userNo;
 
-    private String name;
+    private String title;
 
-    @Column(name = "password", columnDefinition = "varchar2")
-    private String password;
+    private String content;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "private")
+    private YorN isPrivate;
 
     @CreatedDate
-    @Column(name = "create_date", columnDefinition = "datetime")
+    @Column(name = "create_date")
     private LocalDateTime createDate;
 
     @LastModifiedDate
-    @Column(name = "update_date", columnDefinition = "datetime")
+    @Column(name = "update_date")
     private LocalDateTime updateDate;
-
-    public static User createUser(String id, String name, String password) {
-        return User.builder()
-                .id(id)
-                .name(name)
-                .password(password)
-                .build();
-    }
 }
