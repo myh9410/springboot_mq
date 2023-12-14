@@ -48,4 +48,8 @@ public class User {
                 .password(password)
                 .build();
     }
+
+    public void changeUpdateDateToNow() {
+        this.updateDate = LocalDateTime.now();
+    }
 }

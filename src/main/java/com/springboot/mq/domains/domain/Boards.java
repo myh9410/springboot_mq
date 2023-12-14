@@ -6,6 +6,7 @@ import com.springboot.mq.common.enums.YorN;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "boards")
 @Entity
 public class Boards {
@@ -22,6 +23,7 @@ public class Boards {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long no;
 
+    @Column(name = "user_no")
     private Long userNo;
 
     private String title;
