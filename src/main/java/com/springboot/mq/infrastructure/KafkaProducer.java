@@ -43,7 +43,10 @@ public class KafkaProducer {
     }
 
     public void sendDefaultBoardCreateEvent(DefaultBoardCreateEvent defaultBoardCreateEvent) {
-        log.info("consumer :: transaction-id :: {}", TransactionAspectSupport.currentTransactionStatus().hashCode());
+        log.info("producer :: is-new {} :: transaction-id :: {}",
+                TransactionAspectSupport.currentTransactionStatus().isNewTransaction(),
+                TransactionAspectSupport.currentTransactionStatus().hashCode()
+        );
         try {
             boardTemplate.send(TOPIC, defaultBoardCreateEvent);
             System.out.println("default board create event publish");

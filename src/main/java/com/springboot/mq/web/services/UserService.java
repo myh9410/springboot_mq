@@ -37,7 +37,11 @@ public class UserService {
 
     @Transactional
     public UserInfo createUser(CreateUserRequest createUserRequest) {
-        log.info("userService :: transaction-id :: {}", TransactionAspectSupport.currentTransactionStatus().hashCode());
+        log.info("userService :: is-new {} :: transaction-id :: {}",
+                TransactionAspectSupport.currentTransactionStatus().isNewTransaction(),
+                TransactionAspectSupport.currentTransactionStatus().hashCode()
+        );
+
         User user = userRepository.save(
             User.createUser(
                 createUserRequest.getId(),
@@ -49,5 +53,12 @@ public class UserService {
         applicationEventPublisher.publishEvent(DefaultBoardCreateEvent.builder().userNo(user.getNo()).build());
 
         return new UserInfo(user);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void updateDate(Long userNo) {
+        User user = userRepository.findById(userNo).orElseThrow(RuntimeException::new);
+
+        user.changeUpdateDateToNow();
     }
 }
