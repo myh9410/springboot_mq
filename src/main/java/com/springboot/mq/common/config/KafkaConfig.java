@@ -1,5 +1,6 @@
 package com.springboot.mq.common.config;
 
+import com.springboot.mq.domains.dto.DefaultBoardCreateEvent;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -25,11 +26,27 @@ public class KafkaConfig {
 
     private final KafkaProperties kafkaProperties;
 
+    /*
+        Template Bean
+     */
     @Bean(name = "stringTemplate")
-    public KafkaTemplate<String, Object> kafkaTemplate() {
+    public KafkaTemplate<String, String> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
+    @Bean(name = "jsonTemplate")
+    public KafkaTemplate<String, Object> kafkaJsonTemplate() {
+        return new KafkaTemplate<>(producerJsonFactory());
+    }
+
+    @Bean(name = "boardCreateEventTemplate")
+    public KafkaTemplate<String, DefaultBoardCreateEvent> kafkaBoardTemplate() {
+        return new KafkaTemplate<>(producerBoardFactory());
+    }
+
+    /*
+        ContainerFactory
+     */
     @Bean
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, String>> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<Integer, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
@@ -43,7 +60,29 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, Object> producerFactory() {
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, String>> kafkaListenerContainerJsonFactory() {
+        ConcurrentKafkaListenerContainerFactory<Integer, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConcurrency(1);
+        factory.setConsumerFactory(consumerJsonFactory());
+
+        return factory;
+    }
+
+    @Bean
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, DefaultBoardCreateEvent>> kafkaListenerContainerBoardFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, DefaultBoardCreateEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConcurrency(1);
+        factory.setConsumerFactory(consumerBoardFactory());
+
+        return factory;
+    }
+
+    /*
+     * Producers
+     */
+
+    @Bean
+    public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers());
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -51,6 +90,30 @@ public class KafkaConfig {
 
         return new DefaultKafkaProducerFactory<>(config);
     }
+
+    @Bean
+    public ProducerFactory<String, Object> producerJsonFactory() {
+        Map<String, Object> config = new HashMap<>();
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers());
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+        return new DefaultKafkaProducerFactory<>(config);
+    }
+
+    @Bean
+    public ProducerFactory<String, DefaultBoardCreateEvent> producerBoardFactory() {
+        Map<String, Object> config = new HashMap<>();
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers());
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+        return new DefaultKafkaProducerFactory<>(config);
+    }
+
+    /*
+     * Consumers
+     */
 
     @Bean
     public ConsumerFactory<Integer, String> consumerFactory() {
@@ -65,28 +128,21 @@ public class KafkaConfig {
         return new DefaultKafkaConsumerFactory<>(config);
     }
 
-    @Bean(name = "jsonTemplate")
-    public KafkaTemplate<String, Object> kafkaJsonTemplate() {
-        return new KafkaTemplate<>(producerJsonFactory());
-    }
-
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<Integer, String>> kafkaListenerContainerJsonFactory() {
-        ConcurrentKafkaListenerContainerFactory<Integer, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConcurrency(1);
-        factory.setConsumerFactory(consumerJsonFactory());
-
-        return factory;
-    }
-
-    @Bean
-    public ProducerFactory<String, Object> producerJsonFactory() {
+    public ConsumerFactory<String, DefaultBoardCreateEvent> consumerBoardFactory() {
         Map<String, Object> config = new HashMap<>();
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers());
-        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
-        return new DefaultKafkaProducerFactory<>(config);
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers());
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.getGroupId());
+        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+
+        return new DefaultKafkaConsumerFactory<>(config,
+                new StringDeserializer(),
+                new JsonDeserializer<>(DefaultBoardCreateEvent.class, false)
+        );
     }
 
     @Bean

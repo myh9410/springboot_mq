@@ -1,5 +1,7 @@
 package com.springboot.mq.infrastructure;
 
+import com.springboot.mq.domains.domain.Callback;
+import com.springboot.mq.domains.dto.DefaultBoardCreateEvent;
 import com.springboot.mq.domains.dto.TestEvent;
 
 import com.springboot.mq.domains.repository.callback.CallbackRepository;
@@ -101,5 +103,12 @@ public class EventComponent {
     @Async
     public void publishTestEvent(String testEventAsString) {
         kafkaProducer.sendTestEventAsString(testEventAsString);
+    }
+
+    @Transactional
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Async
+    public void publishDefaultBoardCreate(DefaultBoardCreateEvent defaultBoardCreateEvent) {
+        kafkaProducer.sendDefaultBoardCreateEvent(defaultBoardCreateEvent);
     }
 }
