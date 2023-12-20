@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -20,6 +23,9 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Transactional(propagation = Propagation.REQUIRED)
     public User createUserData() {
@@ -31,8 +37,15 @@ public class UserService {
         );
     }
 
+    @Transactional(readOnly = true)
     public UserInfo findUserByNo(Long no) {
-        return  userRepository.getUserInfoByNo(no);
+        UserInfo userInfo = userRepository.getUserInfoByNo(no);
+
+        User user = entityManager.find(User.class, userInfo.getNo());
+
+        log.info("is entityManager contains - service : " + entityManager.contains(user));
+
+        return userInfo;
     }
 
     @Transactional
