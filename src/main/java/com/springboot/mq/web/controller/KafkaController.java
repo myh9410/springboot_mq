@@ -19,6 +19,11 @@ public class KafkaController {
         return "SUCCESS";
     }
 
+    @PostMapping("/users")
+    public void createUserAndDefaultBoard(@RequestParam("user_id") String userId) {
+        integratedService.createUserAndDefaultBoard(userId);
+    }
+
     @PostMapping(value = "/string")
     public String createMessageDataAndEmitEventOfString(@RequestParam("message") String message) {
         integratedService.createTestEventAsString(message);

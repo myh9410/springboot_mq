@@ -29,12 +29,15 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public User createUserData() {
-        return userRepository.save(
+        User user = userRepository.save(
                 User.builder()
                     .id("myh9410")
                     .name("문용호")
+                    .password("password")
                     .build()
         );
+
+        return user;
     }
 
     @Transactional(readOnly = true)

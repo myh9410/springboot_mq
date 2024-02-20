@@ -22,6 +22,13 @@ public class IntegratedService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final TestService testService;
     private final UserService userService;
+    private final BoardService boardService;
+
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void createUserAndDefaultBoard(String userId) {
+        userService.createUserData();
+        boardService.createWelcomeBoard(1L);
+    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void doAction() {
@@ -44,11 +51,11 @@ public class IntegratedService {
     /**
      * test DB에 데이터를 넣고, 이벤트를 발생시킨다.
      */
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(transactionManager = "jtaTransactionManager", propagation = Propagation.REQUIRES_NEW)
     public void createTestEvent(String message) {
         log.info("""
                 
-                [log start]
+                [integratedService log start]
                 이벤트 - createTestEvent :: {}
                 트랜잭션 hashCode :: {}
                 [log end]

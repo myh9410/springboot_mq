@@ -17,13 +17,8 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
-    @Transactional(propagation = Propagation.SUPPORTS)
+    @Transactional(propagation = Propagation.NESTED)
     public Long createWelcomeBoard(Long userNo) {
-        log.info("boardService :: is-new {} :: transaction-id :: {}",
-                TransactionAspectSupport.currentTransactionStatus().isNewTransaction(),
-                TransactionAspectSupport.currentTransactionStatus().hashCode()
-        );
-
         Boards welcomeBoard = boardRepository.save(
             Boards.builder()
                     .userNo(userNo)
@@ -33,7 +28,7 @@ public class BoardService {
                     .build()
         );
 
-        return welcomeBoard.getNo();
+        throw new RuntimeException();
     }
 
 }
