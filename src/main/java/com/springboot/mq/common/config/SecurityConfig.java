@@ -12,7 +12,7 @@ import org.springframework.security.web.context.request.async.WebAsyncManagerInt
 
 @Profile("!test")
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
