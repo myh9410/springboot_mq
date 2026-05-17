@@ -67,7 +67,7 @@ docker compose up -d
 | 서비스 | 호스트 접근 | 컨테이너 내부 접근 |
 |---|---|---|
 | Kafka 브로커 | `localhost:9094` | `kafka:9092` |
-| Kafka UI | http://localhost:8080 | — |
+| Kafka UI | http://localhost:8090 | — |
 
 KRaft 모드(단일 브로커, Zookeeper 없음)로 동작한다. 인증은 없는 PLAINTEXT 구성이며, **로컬 학습 외 목적으로 사용하지 말 것**.
 

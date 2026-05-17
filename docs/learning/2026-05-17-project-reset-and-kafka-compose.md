@@ -24,7 +24,7 @@ springboot_mq를 학습용 샌드박스로 재출발하면서, Kafka를 OrbStack
 
 - **KRaft**: Kafka 2.8부터 도입되어 3.x에서 정식화된 모드. Zookeeper 없이 Kafka 자체가 메타데이터 관리(컨트롤러 쿼럼)를 수행. Kafka 4.x부터는 Zookeeper 지원이 제거될 예정이라 새로 만드는 환경에서 굳이 ZK를 두는 건 비추.
 - **단일 브로커**: 학습 환경이라 클러스터링/리플리케이션이 불필요. `offsets.topic.replication.factor`, `transaction.state.log.replication.factor`, `min.isr`를 모두 1로 둬야 단일 브로커에서 정상 동작.
-- **Kafka UI (provectuslabs)**: 토픽/컨슈머/메시지 페이로드를 GUI로 확인. 학습 중에 "내가 보낸 메시지가 정말 들어갔나"를 빠르게 확인하기 좋음. http://localhost:8080.
+- **Kafka UI (provectuslabs)**: 토픽/컨슈머/메시지 페이로드를 GUI로 확인. 학습 중에 "내가 보낸 메시지가 정말 들어갔나"를 빠르게 확인하기 좋음. http://localhost:8090.
 
 ### 리스너 설계 (가장 헷갈리는 부분)
 
