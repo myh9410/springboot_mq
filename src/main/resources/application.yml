@@ -3,3 +3,6 @@ spring:
     name: springboot-mq
   kafka:
     bootstrap-servers: localhost:9094
+    consumer:
+      group-id: springboot-mq-consumer
+      auto-offset-reset: earliest
