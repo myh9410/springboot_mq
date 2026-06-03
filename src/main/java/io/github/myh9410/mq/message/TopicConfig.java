@@ -22,6 +22,14 @@ public class TopicConfig {
     }
 
     @Bean
+    public NewTopic ordersTopic() {
+        return TopicBuilder.name(Topics.ORDERS)
+            .partitions(3)
+            .replicas(1)
+            .build();
+    }
+
+    @Bean
     public NewTopic dlqTopic() {
         return TopicBuilder.name(Topics.DLQ)
             .partitions(1)

@@ -16,15 +16,15 @@ import io.github.myh9410.mq.message.Message;
 @RequestMapping("/messages")
 public class MessageController {
 
-    private final MessageProducer producer;
+    private final EventPublisher publisher;
 
-    public MessageController(MessageProducer producer) {
-        this.producer = producer;
+    public MessageController(EventPublisher publisher) {
+        this.publisher = publisher;
     }
 
     @PostMapping
     public ResponseEntity<Void> publish(@RequestBody Message message) {
-        producer.send(message);
+        publisher.publish(message);
         return ResponseEntity.accepted().build();
     }
 
@@ -36,7 +36,7 @@ public class MessageController {
         Instant now = Instant.now();
         for (int i = 0; i < count; i++) {
             String id = "burst-" + UUID.randomUUID();
-            producer.send(new Message(id, "burst#" + i, now));
+            publisher.publish(new Message(id, "burst#" + i, now));
         }
         return ResponseEntity.accepted().build();
     }
