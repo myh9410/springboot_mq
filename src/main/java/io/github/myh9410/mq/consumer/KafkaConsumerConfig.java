@@ -10,6 +10,7 @@ import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -118,6 +119,25 @@ public class KafkaConsumerConfig {
             new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(batchConsumerFactory);
         factory.setBatchListener(true);
+        factory.setCommonErrorHandler(kafkaErrorHandler);
+        return factory;
+    }
+
+    /**
+     * Manual ack 모드 listener factory.
+     * - AckMode.MANUAL_IMMEDIATE: 리스너에서 ack.acknowledge() 호출 직후 broker에 offset commit.
+     * - ack를 호출하지 않으면 offset 미커밋 → 컨슈머 재시작/rebalance 시 같은 record를 다시 받게 된다.
+     * - Spring Kafka가 listener container를 쓸 때는 자동으로 enable.auto.commit=false로 둔다.
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Message> manualAckKafkaListenerContainerFactory(
+        ConsumerFactory<String, Message> consumerFactory,
+        DefaultErrorHandler kafkaErrorHandler
+    ) {
+        ConcurrentKafkaListenerContainerFactory<String, Message> factory =
+            new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         factory.setCommonErrorHandler(kafkaErrorHandler);
         return factory;
     }
