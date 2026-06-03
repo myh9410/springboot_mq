@@ -4,19 +4,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.support.ProducerListener;
 import org.springframework.kafka.support.serializer.JacksonJsonSerializer;
 
 import tools.jackson.databind.json.JsonMapper;
 
 @Configuration
 public class KafkaProducerConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(KafkaProducerConfig.class);
 
     @Bean
     public ProducerFactory<String, Object> producerFactory(
@@ -45,6 +52,20 @@ public class KafkaProducerConfig {
 
     @Bean
     public KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> producerFactory) {
-        return new KafkaTemplate<>(producerFactory);
+        KafkaTemplate<String, Object> template = new KafkaTemplate<>(producerFactory);
+        // 모든 send 결과를 한 곳에서 처리 — 호출부의 whenComplete 콜백 책임을 framework 레이어로 옮긴다.
+        template.setProducerListener(new ProducerListener<String, Object>() {
+            @Override
+            public void onSuccess(ProducerRecord<String, Object> record, RecordMetadata metadata) {
+                log.info("Sent ok: topic={} partition={} offset={} key={}",
+                    metadata.topic(), metadata.partition(), metadata.offset(), record.key());
+            }
+
+            @Override
+            public void onError(ProducerRecord<String, Object> record, RecordMetadata metadata, Exception exception) {
+                log.error("Send failed: topic={} key={}", record.topic(), record.key(), exception);
+            }
+        });
+        return template;
     }
 }
