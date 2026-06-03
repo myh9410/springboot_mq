@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.github.myh9410.mq.message.Message;
+
 @RestController
 @RequestMapping("/messages")
 public class MessageController {
@@ -17,8 +19,8 @@ public class MessageController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> publish(@RequestBody String payload) {
-        producer.send(payload);
+    public ResponseEntity<Void> publish(@RequestBody Message message) {
+        producer.send(message);
         return ResponseEntity.accepted().build();
     }
 }
