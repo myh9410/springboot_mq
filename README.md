@@ -68,6 +68,8 @@ docker compose up -d
 |---|---|---|
 | Kafka 브로커 | `localhost:9094` | `kafka:9092` |
 | Kafka UI | http://localhost:8090 | — |
+| Prometheus | http://localhost:9090 | `prometheus:9090` |
+| Grafana | http://localhost:3000 (admin / admin) | — |
 
 KRaft 모드(단일 브로커, Zookeeper 없음)로 동작한다. 인증은 없는 PLAINTEXT 구성이며, **로컬 학습 외 목적으로 사용하지 말 것**.
 

@@ -6,3 +6,12 @@ spring:
     consumer:
       group-id: springboot-mq-consumer
       auto-offset-reset: earliest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  endpoint:
+    health:
+      show-details: when_authorized

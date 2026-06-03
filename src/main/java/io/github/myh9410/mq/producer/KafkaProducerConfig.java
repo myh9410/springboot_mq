@@ -14,9 +14,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.MicrometerProducerListener;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.ProducerListener;
 import org.springframework.kafka.support.serializer.JacksonJsonSerializer;
+
+import io.micrometer.core.instrument.MeterRegistry;
 
 import tools.jackson.databind.json.JsonMapper;
 
@@ -28,7 +31,8 @@ public class KafkaProducerConfig {
     @Bean
     public ProducerFactory<String, Object> producerFactory(
         KafkaProperties kafkaProperties,
-        JsonMapper jsonMapper
+        JsonMapper jsonMapper,
+        MeterRegistry meterRegistry
     ) {
         Map<String, Object> config = new HashMap<>(kafkaProperties.buildProducerProperties());
 
@@ -47,7 +51,10 @@ public class KafkaProducerConfig {
         JacksonJsonSerializer<Object> valueSerializer = new JacksonJsonSerializer<>(jsonMapper);
         valueSerializer.setAddTypeInfo(false);
 
-        return new DefaultKafkaProducerFactory<>(config, new StringSerializer(), valueSerializer);
+        DefaultKafkaProducerFactory<String, Object> factory =
+            new DefaultKafkaProducerFactory<>(config, new StringSerializer(), valueSerializer);
+        factory.addListener(new MicrometerProducerListener<>(meterRegistry));
+        return factory;
     }
 
     @Bean

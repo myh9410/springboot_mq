@@ -15,6 +15,8 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.MicrometerConsumerListener;
+import org.springframework.kafka.core.MicrometerProducerListener;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -25,6 +27,8 @@ import org.springframework.util.backoff.ExponentialBackOff;
 
 import tools.jackson.databind.json.JsonMapper;
 
+import io.micrometer.core.instrument.MeterRegistry;
+
 import io.github.myh9410.mq.message.Message;
 import io.github.myh9410.mq.message.Topics;
 
@@ -34,7 +38,8 @@ public class KafkaConsumerConfig {
     @Bean
     public ConsumerFactory<String, Message> consumerFactory(
         KafkaProperties kafkaProperties,
-        JsonMapper jsonMapper
+        JsonMapper jsonMapper,
+        MeterRegistry meterRegistry
     ) {
         Map<String, Object> config = new HashMap<>(kafkaProperties.buildConsumerProperties());
 
@@ -45,11 +50,11 @@ public class KafkaConsumerConfig {
         ErrorHandlingDeserializer<Message> valueDeserializer =
             new ErrorHandlingDeserializer<>(jsonDeserializer);
 
-        return new DefaultKafkaConsumerFactory<>(
-            config,
-            new StringDeserializer(),
-            valueDeserializer
+        DefaultKafkaConsumerFactory<String, Message> factory = new DefaultKafkaConsumerFactory<>(
+            config, new StringDeserializer(), valueDeserializer
         );
+        factory.addListener(new MicrometerConsumerListener<>(meterRegistry));
+        return factory;
     }
 
     @Bean
@@ -71,11 +76,16 @@ public class KafkaConsumerConfig {
      * DLQ 관찰용 String-payload listener container. 원본 payload를 그대로 받아 헤더와 같이 로깅한다.
      */
     @Bean
-    public ConsumerFactory<String, String> stringConsumerFactory(KafkaProperties kafkaProperties) {
+    public ConsumerFactory<String, String> stringConsumerFactory(
+        KafkaProperties kafkaProperties,
+        MeterRegistry meterRegistry
+    ) {
         Map<String, Object> config = new HashMap<>(kafkaProperties.buildConsumerProperties());
-        return new DefaultKafkaConsumerFactory<>(
+        DefaultKafkaConsumerFactory<String, String> factory = new DefaultKafkaConsumerFactory<>(
             config, new StringDeserializer(), new StringDeserializer()
         );
+        factory.addListener(new MicrometerConsumerListener<>(meterRegistry));
+        return factory;
     }
 
     @Bean
@@ -95,7 +105,8 @@ public class KafkaConsumerConfig {
     @Bean
     public ConsumerFactory<String, Message> batchConsumerFactory(
         KafkaProperties kafkaProperties,
-        JsonMapper jsonMapper
+        JsonMapper jsonMapper,
+        MeterRegistry meterRegistry
     ) {
         Map<String, Object> config = new HashMap<>(kafkaProperties.buildConsumerProperties());
         config.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 10);
@@ -105,9 +116,11 @@ public class KafkaConsumerConfig {
         ErrorHandlingDeserializer<Message> valueDeserializer =
             new ErrorHandlingDeserializer<>(jsonDeserializer);
 
-        return new DefaultKafkaConsumerFactory<>(
+        DefaultKafkaConsumerFactory<String, Message> factory = new DefaultKafkaConsumerFactory<>(
             config, new StringDeserializer(), valueDeserializer
         );
+        factory.addListener(new MicrometerConsumerListener<>(meterRegistry));
+        return factory;
     }
 
     @Bean
@@ -150,14 +163,17 @@ public class KafkaConsumerConfig {
     @Bean
     public KafkaTemplate<String, Object> dltKafkaTemplate(
         KafkaProperties kafkaProperties,
-        JsonMapper jsonMapper
+        JsonMapper jsonMapper,
+        MeterRegistry meterRegistry
     ) {
         Map<String, Object> config = new HashMap<>(kafkaProperties.buildProducerProperties());
         JacksonJsonSerializer<Object> valueSerializer = new JacksonJsonSerializer<>(jsonMapper);
         valueSerializer.setAddTypeInfo(false);
-        return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(
+        DefaultKafkaProducerFactory<String, Object> factory = new DefaultKafkaProducerFactory<>(
             config, new StringSerializer(), valueSerializer
-        ));
+        );
+        factory.addListener(new MicrometerProducerListener<>(meterRegistry));
+        return new KafkaTemplate<>(factory);
     }
 
     /**
