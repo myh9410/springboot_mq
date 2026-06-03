@@ -3,6 +3,7 @@ package io.github.myh9410.mq.consumer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
@@ -83,6 +84,41 @@ public class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, String> factory =
             new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(stringConsumerFactory);
+        return factory;
+    }
+
+    /**
+     * Batch listener 전용 ConsumerFactory.
+     * max.poll.records를 줄여서 한 번에 받는 batch 크기 상한을 명시. (다운스트림 API 제약 등을 고려해 정함)
+     */
+    @Bean
+    public ConsumerFactory<String, Message> batchConsumerFactory(
+        KafkaProperties kafkaProperties,
+        JsonMapper jsonMapper
+    ) {
+        Map<String, Object> config = new HashMap<>(kafkaProperties.buildConsumerProperties());
+        config.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 10);
+
+        JacksonJsonDeserializer<Message> jsonDeserializer =
+            new JacksonJsonDeserializer<>(Message.class, jsonMapper, false);
+        ErrorHandlingDeserializer<Message> valueDeserializer =
+            new ErrorHandlingDeserializer<>(jsonDeserializer);
+
+        return new DefaultKafkaConsumerFactory<>(
+            config, new StringDeserializer(), valueDeserializer
+        );
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Message> batchKafkaListenerContainerFactory(
+        ConsumerFactory<String, Message> batchConsumerFactory,
+        DefaultErrorHandler kafkaErrorHandler
+    ) {
+        ConcurrentKafkaListenerContainerFactory<String, Message> factory =
+            new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(batchConsumerFactory);
+        factory.setBatchListener(true);
+        factory.setCommonErrorHandler(kafkaErrorHandler);
         return factory;
     }
 
