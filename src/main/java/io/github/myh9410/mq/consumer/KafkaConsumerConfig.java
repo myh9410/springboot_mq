@@ -59,6 +59,9 @@ public class KafkaConsumerConfig {
             new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         factory.setCommonErrorHandler(kafkaErrorHandler);
+        // 토픽 partition이 3개 → 같은 JVM 안의 3개 스레드가 partition 1개씩 받게 한다.
+        // 같은 group-id를 가진 외부 consumer가 더 붙으면 rebalance가 발생해 partition이 재분배된다.
+        factory.setConcurrency(3);
         return factory;
     }
 
