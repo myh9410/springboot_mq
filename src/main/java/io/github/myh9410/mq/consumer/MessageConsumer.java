@@ -18,5 +18,11 @@ public class MessageConsumer {
     public void onMessage(ConsumerRecord<String, Message> record) {
         log.info("Received: topic={} partition={} offset={} key={} payload={}",
             record.topic(), record.partition(), record.offset(), record.key(), record.value());
+
+        // 학습용 의도적 실패 트리거: content가 "fail"로 시작하면 throw → 재시도 → DLQ
+        Message msg = record.value();
+        if (msg != null && msg.content() != null && msg.content().startsWith("fail")) {
+            throw new IllegalStateException("induced consumer failure for content=" + msg.content());
+        }
     }
 }
